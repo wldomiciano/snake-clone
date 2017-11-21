@@ -23,6 +23,6 @@ int getKeyState(int key);
 
 SDL_bool is_running();
 void draw_rect(Rect* rect, Color color);
-void draw_text(const char* text, int x, int y, Color color);
+void draw_text(int x, int y, Color color, const char *fmt, ...);
 
 #endif //SNAKECLONERESTARTED_FRAMEWORK_H

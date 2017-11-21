@@ -71,16 +71,23 @@ void draw_rect(Rect* rect, Color color) {
     SDL_RenderFillRect(renderer, rect);
 }
 
-void draw_text(const char* text, int x, int y, Color color) {
+#define MAX_LENGTH 1024
+void draw_text(int x, int y, Color color, const char *fmt, ...) {
     SDL_Rect rect = { x, y, 0, 0 };
+    char buffer[MAX_LENGTH] = {0};
 
-    SDL_Surface* surface = TTF_RenderText_Solid(font, text, color);
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+    va_list ap;
+    va_start (ap, fmt);
+    SDL_vsnprintf(buffer, MAX_LENGTH, fmt, ap);
+    va_end (ap);
+
+    SDL_Surface* text = TTF_RenderText_Solid(font, buffer, color);
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, text);
 
     SDL_QueryTexture(texture, NULL, NULL, &rect.w, &rect.h);
 
     SDL_RenderCopy(renderer, texture, NULL, &rect);
 
-    SDL_FreeSurface(surface);
+    SDL_FreeSurface(text);
     SDL_DestroyTexture(texture);
 }

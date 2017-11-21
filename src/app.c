@@ -1,8 +1,6 @@
 #include "framework.h"
 #include "game.h"
 
-extern SDL_Renderer* renderer;
-
 int main(int argc, char *argv[]) {
     sdl_init(541, 601);
 

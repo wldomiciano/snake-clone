@@ -226,9 +226,7 @@ void update(Uint32 delta) {
     Rect bg = {10, 10, 100, 50};
     draw_rect(&bg, DISPLAY_COLOR);
 
-    char counter[16];
-    itoa(snake.length, counter, 10);
-    draw_text(counter, 15, 7, NUMBER_COLOR);
+    draw_text(15, 7, NUMBER_COLOR, "%d", snake.length);
 }
 
 void destroy() {
