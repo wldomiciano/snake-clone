@@ -1,74 +1,67 @@
-#include <stdbool.h>
 #include <time.h>
 #include "game.h"
 #include "framework.h"
 
+#define BOARD_COLS 10
+#define BOARD_SIZE 100
+
 Uint32 temp = 0;
 const Uint32 TIME_TO_MOVE = 125;
-
-int  direction = 1;
-int  position = 0;
-int  length = 0;
-int  apple = 5;
-int  boardSize = 100;
-int  boardCols = 10;
-int tail[100];
-int boardCells[100];
-int  isDead = 0;
-
-
-enum { EMPY, HEAD, BODY, APPLE };
+int direction = 1;
+int position = 0;
+int length = 0;
+int apple = 5;
+int tail[BOARD_SIZE];
+int isDead = 0;
 
 // =======================================================================//
 // ! Utilities functions                                                  //
 // =======================================================================//
 
-bool isFirstCol() {
-    return position % boardCols == 0;
+SDL_bool isFirstCol() {
+    return position % BOARD_COLS == 0;
 }
 
-bool isLastCol() {
-    return (position + 1) % boardCols == 0;
+SDL_bool isLastCol() {
+    return (position + 1) % BOARD_COLS == 0;
 }
 
 // =======================================================================//
 // ! Snake specific functions                                             //
 // =======================================================================//
 
-
-void moveHead() {
-//    prev = position;
+void move() {
     tail[length] = position;
     position += direction;
 
     if (direction ==  1 && isFirstCol())
-        position -= boardCols;
+        position -= BOARD_COLS;
 
     else if (direction == -1 && isLastCol())
-        position += boardCols;
+        position += BOARD_COLS;
 
     else if (position < 0)
-        position += boardSize;
+        position += BOARD_SIZE;
 
-    else if (position >= boardSize)
-        position -= boardSize;
+    else if (position >= BOARD_SIZE)
+        position -= BOARD_SIZE;
 }
 
-bool hasCollisionWithTail(int positionToCheck) {
+SDL_bool hasCollisionWithTail(int positionToCheck) {
     for (int i = 0; i < length; i++)
-        if ( tail[i] == positionToCheck ) return true;
-    return false;
+        if ( tail[i] == positionToCheck ) return SDL_TRUE;
+    return SDL_FALSE;
 }
 
-bool hasCollisionBeetwenHeadAndApple() {
-    if ( position == apple ) return true;
-    return false;
+SDL_bool hasCollisionBeetwenHeadAndApple() {
+    if ( position == apple ) return SDL_TRUE;
+    return SDL_FALSE;
 }
 
 void placeApple() {
     srand(time(NULL));
     do {
-        apple = rand() % boardSize;
+        apple = rand() % BOARD_SIZE;
     } while( hasCollisionBeetwenHeadAndApple() || hasCollisionWithTail(apple) );
 }
 
@@ -81,21 +74,21 @@ void setDirection(int dir) {
 // ! Implementation dependent functions                                   //
 // =======================================================================//
 
-void drawBoard(int* cells, int size, int cols, int x, int y) {
+void drawBoard(int x, int y) {
     const int SIZE = 25;
     Rect rect = {x, y, SIZE, SIZE};
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < BOARD_SIZE; i++) {
 
-        if ( i == position ) draw_rect(&rect, HEAD_COLOR);
-        else if ( i == apple ) draw_rect(&rect, APPLE_COLOR);
-        else draw_rect(&rect, CELL);
+        if ( i == position ) draw_rect(&rect, 0x1a7672);
+        else if ( i == apple ) draw_rect(&rect, 0xc62e2e);
+        else draw_rect(&rect, 0xb5afa4);
 
         for (int j = 0; j < length; j++)
             if ( i == tail[j] )
-                draw_rect(&rect, TAIL_COLOR);
+                draw_rect(&rect, 0x24a19c);
 
         rect.x += rect.w + 1;
-        if ((i + 1) % cols == 0) {
+        if ((i + 1) % BOARD_COLS == 0) {
             rect.x = x;
             rect.y += rect.h + 1;
         }
@@ -108,9 +101,9 @@ void handleInput() {
     if (getKeyState(SDL_SCANCODE_RIGHT))
         setDirection( 1);
     if (getKeyState(SDL_SCANCODE_UP))
-        setDirection(-boardCols);
+        setDirection(-BOARD_COLS);
     if (getKeyState(SDL_SCANCODE_DOWN))
-        setDirection( boardCols);
+        setDirection( BOARD_COLS);
 }
 
 // =======================================================================//
@@ -125,8 +118,7 @@ void update(Uint32 delta) {
     if (temp >= TIME_TO_MOVE && !isDead) {
         temp = 0;
 
-        moveHead();
-//        tail[length] = prev; // MOVE BODY
+        move();
         for (int i = 0; i < length; i++) tail[i] = tail[i + 1]; // SORT BODY
 
         if (hasCollisionBeetwenHeadAndApple()) {
@@ -140,10 +132,10 @@ void update(Uint32 delta) {
         }
     }
 
-    drawBoard(boardCells, boardSize, boardCols, 10, 70);
+    drawBoard(10, 70);
 
     Rect bg = {10, 10, 100, 50};
-    draw_rect(&bg, DISPLAY_COLOR);
+    draw_rect(&bg, 0xa6b8a2);
 
-    draw_text(15, 7, NUMBER_COLOR, "%d", length);
+    draw_text(15, 7, 0x373c40, "%d", length);
 }

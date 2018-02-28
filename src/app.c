@@ -2,7 +2,7 @@
 #include "game.h"
 
 int main(int argc, char *argv[]) {
-    sdl_init(541, 601);
+    sdl_init(280, 338);
 
     while (is_running()) {
         sdl_event_handling();

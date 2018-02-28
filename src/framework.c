@@ -1,13 +1,6 @@
 #include <SDL2/SDL_ttf.h>
 #include "framework.h"
 
-const Color CELL = {181, 175, 164, 255};
-const Color HEAD_COLOR = {26, 118, 114, 255};
-const Color TAIL_COLOR = {36, 161, 156, 255};
-const Color APPLE_COLOR = {198, 46, 46, 255};
-const Color NUMBER_COLOR = {55, 60, 64, 255};
-const Color DISPLAY_COLOR = {166, 184, 162, 255};
-
 SDL_Renderer* renderer = NULL;
 static SDL_Window* window = NULL;
 static SDL_Event event = {0};
@@ -66,13 +59,23 @@ SDL_bool is_running() {
     return isRunning;
 }
 
-void draw_rect(Rect* rect, Color color) {
+SDL_Color intToColor(Uint32 hexColor) {
+    Uint8 r = hexColor >> 16 & 0xFF;
+    Uint8 g = hexColor >>  8 & 0xFF;
+    Uint8 b = hexColor & 0xFF;
+    SDL_Color color = {r, g, b, SDL_ALPHA_OPAQUE};
+    return color;
+}
+
+void draw_rect(Rect* rect, Uint32 hexColor) {
+    SDL_Color color = intToColor(hexColor);
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
     SDL_RenderFillRect(renderer, rect);
 }
 
 #define MAX_LENGTH 1024
-void draw_text(int x, int y, Color color, const char *fmt, ...) {
+void draw_text(int x, int y, Uint32 hexColor, const char *fmt, ...) {
+    SDL_Color color = intToColor(hexColor);
     SDL_Rect rect = { x, y, 0, 0 };
     char buffer[MAX_LENGTH] = {0};
 
@@ -85,6 +88,8 @@ void draw_text(int x, int y, Color color, const char *fmt, ...) {
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, text);
 
     SDL_QueryTexture(texture, NULL, NULL, &rect.w, &rect.h);
+
+    /* alinha numero à direita */ rect.x += (95 - rect.w);
 
     SDL_RenderCopy(renderer, texture, NULL, &rect);
 
