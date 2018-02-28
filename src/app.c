@@ -4,8 +4,6 @@
 int main(int argc, char *argv[]) {
     sdl_init(541, 601);
 
-    create();
-
     while (is_running()) {
         sdl_event_handling();
 
@@ -15,8 +13,6 @@ int main(int argc, char *argv[]) {
 
         sdl_render_present();
     }
-
-    destroy();
 
     sdl_quit();
     return 0;
