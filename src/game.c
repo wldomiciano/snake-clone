@@ -9,7 +9,7 @@ Uint32 temp = 0;
 const Uint32 TIME_TO_MOVE = 125;
 int direction = 1;
 int position = 0;
-int length = 3;
+int length = 0;
 int apple = 5;
 int tail[BOARD_SIZE];
 int isDead = 0;
@@ -27,7 +27,7 @@ void move() {
     tail[index++] = position;
     position += direction;
 
-    if (index == length) index = 0;
+    if (index >= length) index = 0;
 
     if (direction ==  1 && isFirstCol())
         position -= BOARD_COLS;
@@ -117,8 +117,7 @@ void update(Uint32 delta) {
 
     drawBoard(10, 70);
 
-//    Rect bg = {10, 10, 100, 50};
-//    draw_rect(&bg, 0xa6b8a2);
-//
-//    draw_text(15, 7, 0x373c40, "%d", length);
+    Rect bg = {10, 10, 100, 50};
+    draw_rect(&bg, 0xa6b8a2);
+    draw_text(15, 7, 0x373c40, "%d", length);
 }
