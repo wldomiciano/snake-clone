@@ -9,30 +9,25 @@ Uint32 temp = 0;
 const Uint32 TIME_TO_MOVE = 125;
 int direction = 1;
 int position = 0;
-int length = 0;
+int length = 3;
 int apple = 5;
 int tail[BOARD_SIZE];
 int isDead = 0;
+int index = 0;
 
-// =======================================================================//
-// ! Utilities functions                                                  //
-// =======================================================================//
-
-SDL_bool isFirstCol() {
+int isFirstCol() {
     return position % BOARD_COLS == 0;
 }
 
-SDL_bool isLastCol() {
+int isLastCol() {
     return (position + 1) % BOARD_COLS == 0;
 }
 
-// =======================================================================//
-// ! Snake specific functions                                             //
-// =======================================================================//
-
 void move() {
-    tail[length] = position;
+    tail[index++] = position;
     position += direction;
+
+    if (index == length) index = 0;
 
     if (direction ==  1 && isFirstCol())
         position -= BOARD_COLS;
@@ -59,7 +54,7 @@ SDL_bool hasCollisionBeetwenHeadAndApple() {
 }
 
 void placeApple() {
-    srand(time(NULL));
+    srand((unsigned) time(NULL));
     do {
         apple = rand() % BOARD_SIZE;
     } while( hasCollisionBeetwenHeadAndApple() || hasCollisionWithTail(apple) );
@@ -70,15 +65,10 @@ void setDirection(int dir) {
         direction = dir;
 }
 
-// =======================================================================//
-// ! Implementation dependent functions                                   //
-// =======================================================================//
-
 void drawBoard(int x, int y) {
     const int SIZE = 25;
     Rect rect = {x, y, SIZE, SIZE};
     for (int i = 0; i < BOARD_SIZE; i++) {
-
         if ( i == position ) draw_rect(&rect, 0x1a7672);
         else if ( i == apple ) draw_rect(&rect, 0xc62e2e);
         else draw_rect(&rect, 0xb5afa4);
@@ -106,10 +96,6 @@ void handleInput() {
         setDirection( BOARD_COLS);
 }
 
-// =======================================================================//
-// ! Framework functions                                                  //
-// =======================================================================//
-
 void update(Uint32 delta) {
     temp += delta;
 
@@ -119,14 +105,11 @@ void update(Uint32 delta) {
         temp = 0;
 
         move();
-        for (int i = 0; i < length; i++) tail[i] = tail[i + 1]; // SORT BODY
 
         if (hasCollisionBeetwenHeadAndApple()) {
             placeApple();
             length++;
-            for(int i = length; i > 0; i--)
-                tail[i] = tail[i - 1];
-            tail[0] = position;
+            tail[length - 1] = position;
         } else if (hasCollisionWithTail(position)) {
             isDead = 1;
         }
@@ -134,8 +117,8 @@ void update(Uint32 delta) {
 
     drawBoard(10, 70);
 
-    Rect bg = {10, 10, 100, 50};
-    draw_rect(&bg, 0xa6b8a2);
-
-    draw_text(15, 7, 0x373c40, "%d", length);
+//    Rect bg = {10, 10, 100, 50};
+//    draw_rect(&bg, 0xa6b8a2);
+//
+//    draw_text(15, 7, 0x373c40, "%d", length);
 }
