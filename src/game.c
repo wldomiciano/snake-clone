@@ -21,8 +21,8 @@ int isFirstCol() {
     return position % BOARD_COLS == 0;
 }
 
-int isLastCol() {
-    return (position + 1) % BOARD_COLS == 0;
+int isLastCol(int pos) {
+    return (pos + 1) % BOARD_COLS == 0;
 }
 
 void move() {
@@ -34,7 +34,7 @@ void move() {
     if (direction ==  1 && isFirstCol())
         position -= BOARD_COLS;
 
-    else if (direction == -1 && isLastCol())
+    else if (direction == -1 && isLastCol(position))
         position += BOARD_COLS;
 
     else if (position < 0)
@@ -81,7 +81,7 @@ void drawBoard(int x, int y) {
         SDL_RenderFillRect(renderer, &rect);
 
         rect.x += rect.w + 1;
-        if ((i + 1) % BOARD_COLS == 0) {
+        if ( isLastCol(i) ) {
             rect.x = x;
             rect.y += rect.h + 1;
         }
