@@ -10,5 +10,5 @@ find_package(SDL2_ttf REQUIRED)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-add_executable(${PROJECT_NAME} src/app.c include/game.h src/framework.c include/framework.h src/game.c)
+add_executable(${PROJECT_NAME} src/main.c src/game.c)
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2_TTF_LIBRARY})

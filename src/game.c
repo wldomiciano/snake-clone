@@ -1,19 +1,21 @@
 #include <time.h>
-#include "game.h"
-#include "framework.h"
+#include <SDL2/SDL.h>
+
+extern const Uint8* keyStates;
+extern SDL_Renderer* renderer;
 
 #define BOARD_COLS 10
 #define BOARD_SIZE 100
 
-Uint32 temp = 0;
-const Uint32 TIME_TO_MOVE = 125;
+int temp      = 0;
+int TIMEOUT   = 150;
 int direction = 1;
-int position = 0;
-int length = 0;
-int apple = 5;
+int position  = 0;
+int length    = 0;
+int apple     = 5;
+int isDead    = 0;
+int i         = 0;
 int tail[BOARD_SIZE];
-int isDead = 0;
-int index = 0;
 
 int isFirstCol() {
     return position % BOARD_COLS == 0;
@@ -24,10 +26,10 @@ int isLastCol() {
 }
 
 void move() {
-    tail[index++] = position;
+    tail[i++] = position;
     position += direction;
 
-    if (index >= length) index = 0;
+    if (i >= length) i = 0;
 
     if (direction ==  1 && isFirstCol())
         position -= BOARD_COLS;
@@ -49,12 +51,10 @@ SDL_bool hasCollisionWithTail(int positionToCheck) {
 }
 
 SDL_bool hasCollisionBeetwenHeadAndApple() {
-    if ( position == apple ) return SDL_TRUE;
-    return SDL_FALSE;
+    return position == apple;
 }
 
 void placeApple() {
-    srand((unsigned) time(NULL));
     do {
         apple = rand() % BOARD_SIZE;
     } while( hasCollisionBeetwenHeadAndApple() || hasCollisionWithTail(apple) );
@@ -66,16 +66,19 @@ void setDirection(int dir) {
 }
 
 void drawBoard(int x, int y) {
-    const int SIZE = 25;
-    Rect rect = {x, y, SIZE, SIZE};
-    for (int i = 0; i < BOARD_SIZE; i++) {
-        if ( i == position ) draw_rect(&rect, 0x1a7672);
-        else if ( i == apple ) draw_rect(&rect, 0xc62e2e);
-        else draw_rect(&rect, 0xb5afa4);
+    SDL_Rect rect = {x, y, 25, 25};
 
-        for (int j = 0; j < length; j++)
-            if ( i == tail[j] )
-                draw_rect(&rect, 0x24a19c);
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        if ( i == position )
+            SDL_SetRenderDrawColor(renderer,  26, 118, 114, 255);
+        else if ( i == apple )
+            SDL_SetRenderDrawColor(renderer, 198,  46,  46, 255);
+        else if ( hasCollisionWithTail(i) )
+            SDL_SetRenderDrawColor(renderer, 36, 161, 156, 255);
+        else
+            SDL_SetRenderDrawColor(renderer, 181, 175, 164, 255);
+
+        SDL_RenderFillRect(renderer, &rect);
 
         rect.x += rect.w + 1;
         if ((i + 1) % BOARD_COLS == 0) {
@@ -86,13 +89,13 @@ void drawBoard(int x, int y) {
 }
 
 void handleInput() {
-    if (getKeyState(SDL_SCANCODE_LEFT))
+    if (keyStates[SDL_SCANCODE_LEFT])
         setDirection(-1);
-    if (getKeyState(SDL_SCANCODE_RIGHT))
+    if (keyStates[SDL_SCANCODE_RIGHT])
         setDirection( 1);
-    if (getKeyState(SDL_SCANCODE_UP))
+    if (keyStates[SDL_SCANCODE_UP])
         setDirection(-BOARD_COLS);
-    if (getKeyState(SDL_SCANCODE_DOWN))
+    if (keyStates[SDL_SCANCODE_DOWN])
         setDirection( BOARD_COLS);
 }
 
@@ -101,9 +104,8 @@ void update(Uint32 delta) {
 
     handleInput();
 
-    if (temp >= TIME_TO_MOVE && !isDead) {
+    if (temp >= TIMEOUT && !isDead) {
         temp = 0;
-
         move();
 
         if (hasCollisionBeetwenHeadAndApple()) {
@@ -115,9 +117,5 @@ void update(Uint32 delta) {
         }
     }
 
-    drawBoard(10, 70);
-
-    Rect bg = {10, 10, 100, 50};
-    draw_rect(&bg, 0xa6b8a2);
-    draw_text(15, 7, 0x373c40, "%d", length);
+    drawBoard(10, 10);
 }
