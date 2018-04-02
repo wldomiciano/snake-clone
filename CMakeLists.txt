@@ -6,9 +6,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall -Wextra -pedantic -Wno-unused-paramete
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 
 find_package(SDL2 REQUIRED)
-find_package(SDL2_ttf REQUIRED)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-add_executable(${PROJECT_NAME} src/main.c src/game.c)
-target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2_TTF_LIBRARY})
+add_executable(${PROJECT_NAME} game.c)
+target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES})
