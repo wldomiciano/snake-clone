@@ -1,0 +1,9 @@
+BasedOnStyle: Google
+SpaceAfterCStyleCast: true
+AllowShortFunctionsOnASingleLine: false
+AccessModifierOffset: -2
+ColumnLimit: 0
+ContinuationIndentWidth: 2
+AlignConsecutiveMacros: true
+AlignConsecutiveAssignments: true
+AlignConsecutiveDeclarations: true

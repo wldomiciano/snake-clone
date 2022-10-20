@@ -2,20 +2,20 @@
 
 #define BOARD_COLS 10
 #define BOARD_SIZE 100
-#define TIMEOUT 150
+#define TIMEOUT    150
 
-int acc = 0;
+int acc       = 0;
 int direction = 1;
-int position = 0;
-int length = 0;
-int apple = 5;
-int isDead = 0;
-int i = 0;
+int position  = 0;
+int length    = 0;
+int apple     = 5;
+int isDead    = 0;
+int i         = 0;
 int tail[BOARD_SIZE];
 
 SDL_Renderer* renderer;
-SDL_Window* window;
-Uint32 previousTicks = 0;
+SDL_Window*   window;
+Uint32        previousTicks = 0;
 
 SDL_bool keyLeft;
 SDL_bool keyRight;
@@ -140,17 +140,17 @@ int main() {
   }
 
   while (!SDL_QuitRequested()) {
-    keyUp = SDL_GetKeyboardState(NULL)[SDL_SCANCODE_UP];
-    keyDown = SDL_GetKeyboardState(NULL)[SDL_SCANCODE_DOWN];
-    keyLeft = SDL_GetKeyboardState(NULL)[SDL_SCANCODE_LEFT];
+    keyUp    = SDL_GetKeyboardState(NULL)[SDL_SCANCODE_UP];
+    keyDown  = SDL_GetKeyboardState(NULL)[SDL_SCANCODE_DOWN];
+    keyLeft  = SDL_GetKeyboardState(NULL)[SDL_SCANCODE_LEFT];
     keyRight = SDL_GetKeyboardState(NULL)[SDL_SCANCODE_RIGHT];
 
     SDL_SetRenderDrawColor(renderer, 228, 220, 207, 255);
     SDL_RenderClear(renderer);
 
     Uint32 current = SDL_GetTicks();
-    Uint32 delta = current - previousTicks;
-    previousTicks = current;
+    Uint32 delta   = current - previousTicks;
+    previousTicks  = current;
 
     update(delta);
 
@@ -160,5 +160,6 @@ int main() {
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();
+
   return 0;
 }
